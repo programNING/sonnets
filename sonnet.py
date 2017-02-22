@@ -3,16 +3,21 @@
 """
 Created on Mon Feb 20 15:02:29 2017
 
-@author: Sith
+@author: Sith, Sandra
+
+@notes: 
+    - took out the first line of sonnet 99 (made it one line too long)
+    - took out the entirety of sonnet 126 (was 12 lines total)
 """
 
+import random
 import csv
 import numpy as np
 #import HMM 
 
 def read_data(filename):    
     header = 3
-    divs = 17
+    divs = 18
     all_sonnets = []
 
     with open(filename,'rb') as f:
@@ -26,6 +31,7 @@ def read_data(filename):
             elif (n < divs):
                 while ("" in row):
                     row.remove("")
+                print row
                 all_sonnets.append(row)
                 n = n + 1
             if (n == divs - 1):
@@ -35,9 +41,10 @@ def read_data(filename):
 def get_rhymes(data):
     result = {}
     num_sonnets = len(data) / 14
-    for i in xrange(0, num_sonnets, 14):
+    for i in xrange(0, len(data), 14):
         # Jump between each sonnet and collect the rhymes.
         sonnet = data[i : i + 14]
+        print 'sonnet ', i, ' is ', sonnet
 
         # We hardcode the rhyming pairs of the sonnet because sonnets
         # have a rigid form anyways, so let's take advantage of it.
@@ -55,16 +62,29 @@ def get_rhymes(data):
             word1 = line1[len(line1) - 1]
             word2 = line2[len(line2) - 1]
             # We will only have one entry of a word in a dict.
-            if result.get(word1) == None && result.get(word2) == None:
+            if result.get(word1) == None and result.get(word2) == None:
                 result[word1] = [word2]
+                result[word2] = [word1]
             elif result.get(word1) == None:
                 result[word2].append(word1)
+                result[word1] = [word2]
             else:
-                result[word1].append(word2)
+                if result.get(word2) == None:
+                    result[word1].append(word2)
+                    result[word2] = [word1]
     return result
 
 def seed_rhymes(rdict):
-    pass
+    result = [[]] * 14
+    # 0 (2), 11 (13)
+    first_words = random.choice(rdict.keys(), 7)
+    rhyme_pairs = []
+    for word1 in first_words:
+        word2 = random.choice(rdict[word1])
+        rhyme_pairs.append((word1, word2))
+
+    # TODO:: finish this function
+
     
 # Function for passing dataset to HMM.
 # Should be as simple as passing all of the words,
@@ -88,8 +108,9 @@ def generate_and_test(hmm):
 # Main Loop
 if __name__ == '__main__':
     shakespeare = read_data("project2data/shakespeare.txt")
-    spenser = read_data("project2data/spenser.txt")
-    print spenser
+    #spenser = read_data("project2data/spenser.txt")
+    #print spenser
+    rhymedic = get_rhymes(shakespeare)
 """
     HMM_model = train_HMM(spenser, 2)
 
