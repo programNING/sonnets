@@ -37,6 +37,14 @@ def read_data(filename):
                 n = 0
     return np.array(all_sonnets)
 
+def reverse_data(sonnets):
+    reverse = []
+    for row in sonnets:
+        copy = row[:]
+        copy.reverse()
+        reverse.append(copy)
+    return reverse
+
 # Stores Rhymes in dictionary  
 def get_rhymes(data):
     result = {}
@@ -114,9 +122,11 @@ def generate_and_test(hmm):
 # Main Loop
 if __name__ == '__main__':
     shakespeare = read_data("project2data/shakespeare.txt")
+    reverse = reverse_data(shakespeare)
+    print reverse
     #spenser = read_data("project2data/spenser.txt")
     #print spenser
-    rhymedic = get_rhymes(shakespeare)
+    #rhymedic = get_rhymes(shakespeare)
 """
     HMM_model = train_HMM(spenser)
 
