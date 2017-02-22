@@ -31,7 +31,8 @@ def read_data(filename):
             if (n == divs - 1):
                 n = 0
     return np.array(all_sonnets)
-    
+
+# Stores Rhymes in dictionary  
 def get_rhymes(data):
     result = {}
     num_sonnets = len(data) / 14
@@ -70,7 +71,7 @@ def seed_rhymes(rdict):
 # Should be as simple as passing all of the words,
 # and a parameter for how many hidden states we should allow.
 # Can probably model this off of TA code from last assignment.
-def train_HMM(X, n_states):
+def train_HMM(X, n_states = 10):
     model = HMM.unsupervised_HMM(X, n_states)
     return model
 
@@ -81,9 +82,15 @@ def train_HMM(X, n_states):
 #   3. CHECK to see if the generated word is kosher.
 #       a. Check if the word ends on the proper stres/unstress.
 #       b. Check that the word does not bring the syllable count to over 10.
-
+# NOT DONE YET
 def generate_and_test(hmm):
-    return 0    
+    emission = ""
+    index = np.random.choice(a = HMM.L, p = HMM.A[index])
+    
+    while (syllable(emission, new_word) > 10):    
+        observe = np.random.choice(a = HMM.D, p = HMM.O[index])
+
+    return emission
 
 # Main Loop
 if __name__ == '__main__':
@@ -91,7 +98,7 @@ if __name__ == '__main__':
     spenser = read_data("project2data/spenser.txt")
     print spenser
 """
-    HMM_model = train_HMM(spenser, 2)
+    HMM_model = train_HMM(spenser)
 
     rhyme_dict = get_rhymes(spenser)
     seeded_sonnet = seed_rhymes(rhyme_dict)
