@@ -84,14 +84,31 @@ def get_rhymes(data):
 
 def seed_rhymes(rdict):
     result = [[]] * 14
-    # 0 (2), 11 (13)
-    first_words = random.choice(rdict.keys(), 7)
-    rhyme_pairs = []
-    for word1 in first_words:
-        word2 = random.choice(rdict[word1])
-        rhyme_pairs.append((word1, word2))
+
+    idx = 0
+    while idx < 12:
+        word1 = random.choice(rdict.keys())
+        if idx % 2 == 0 and idx != 0:
+            idx = idx + 2
+        if idx != 12:
+            result[idx] = [word1]
+
+            result[idx + 2] = [random.choice(rdict[word1])]
+            idx += 1
+        else:
+            result[idx] = word1
+            result[idx + 1] = random.choice(rdict[word1])
+
+    return result
 
     # TODO:: finish this function
+    # 0 -> 2
+    # 1 -> 3
+    # 4 -> 6 (2 mod 2 = 0 -> 2 * i = new i)
+    # 5 -> 7
+    # 8 -> 10 (4 mod 2 = 0 -> 2 * i = new i)
+    # 9 -> 11
+    # 12 -> 13
 
     
 # Function for passing dataset to HMM.
@@ -126,7 +143,8 @@ if __name__ == '__main__':
     print reverse
     #spenser = read_data("project2data/spenser.txt")
     #print spenser
-    #rhymedic = get_rhymes(shakespeare)
+    rhymedic = get_rhymes(shakespeare)
+    print seed_rhymes(rhymedic)
 """
     HMM_model = train_HMM(spenser)
 
