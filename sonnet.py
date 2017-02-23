@@ -127,16 +127,81 @@ def train_HMM(X, n_states = 10):
 #   3. CHECK to see if the generated word is kosher.
 #       a. Check if the word ends on the proper stres/unstress.
 #       b. Check that the word does not bring the syllable count to over 10.
-# NOT DONE YET
-def generate_and_test(hmm):
+
+# ====== HELPER FUNCTIONS FOR GENERATE/TEST ====== #
+def convert_obs_to_word(num):
+    pass
+
+def get_syllables(word):
+    pass
+
+def get_end_stress(word):
+    pass
+
+def get_begin_stress(word):
+    pass
+
+# ====== GENERATE / TEST ====== #
+def generate_and_test(ourHMM, sonnet, obsmap):
     emission = ""
-    index = np.random.choice(a = HMM.L, p = HMM.A[index])
-    
-    for i in xrange(0, 10):
-        index = np.random.choice(a = HMM.L, p = HMM.A[index])
-        observ = np.random.choice(a = HMM.D, p = HMM.O[index])
-        while (syllable(emission, new_word) > 10):    
-            new_word = np.random.choice(a = HMM.D, p = HMM.O[index])
+    line_str = ''
+    for line in sonnet:
+        # Once we're done with a line / start a new line,
+        # add the previous line to the sonnet, properly reversed
+        # and formatted with spaces + newlines.
+        emission += line_str
+        line_str = ''
+
+        # Need to convert the "word" in the sonnet (a number)
+        starting_word = convert_obs_to_word(line[0], obsmap)
+        line_str = starting_word + '\n'
+
+        # We assume each line is seeded with ONE word.
+        num_syllables = get_syllables(line[0])
+        while num_syllables < 10:
+            # Generate a new word!
+            # To do this, first find the state of the previous word
+            last_word = line[-1]
+
+            # Generate a random probability.
+            rand_prob = random.uniform(0, 1)
+            prev_state = 0
+            while rand_prob > 0:
+                rand_prob -= ourHMM.O[prev_state][last_word]
+                prev_state += 1
+            prev_state -= 1
+
+            # Given the previous state, find the state of the next word.
+            rand_prob = random.uniform(0, 1)
+            next_state = 0
+            while rand_prob > 0:
+                rand_prob -= ourHMM.A[prev_state][next_state]
+                next_state += 1
+            next_state -= 1
+
+            # Find the next observation based on the next state.
+            rand_prob = random.uniform(0, 1)
+            next_obs = 0
+            while rand_prob > 0:
+                rand_prob -= ourHMM.O[next_state][next_obs]
+                next_obs += 1
+            next_obs -= 1
+
+            # Check to see if this observation will push us over
+            # our syllable count. If so, we must try again.
+            next_word = convert_obs_to_word(next_obs, obsmap)
+            next_syllables = get_syllables(next_word)
+            if next_syllables + num_syllables <= 10:
+                # Check that the stress is correct.
+                end_stress = get_end_stress(next_word)
+                previous_word = convert_obs_to_word(last_word, obsmap)
+                begin_stress = get_begin_stress(previous_stress)
+                if end_stress + begin_stress == 1:
+                    # If both the stress is good and it doesn't put us
+                    # above our syllable count, then add it to the line!
+                    line.append(next_obs)
+                    line_str = next_word + ' ' + line_str
+                    num_syllables += next_syllables
 
     return emission
 
