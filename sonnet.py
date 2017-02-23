@@ -13,7 +13,7 @@ Created on Mon Feb 20 15:02:29 2017
 import random
 import csv
 import numpy as np
-#import HMM 
+import baum_welch/HMM 
 
 def read_data(filename):    
     header = 3
@@ -114,8 +114,11 @@ def generate_and_test(hmm):
     emission = ""
     index = np.random.choice(a = HMM.L, p = HMM.A[index])
     
-    while (syllable(emission, new_word) > 10):    
-        observe = np.random.choice(a = HMM.D, p = HMM.O[index])
+    for i in xrange(0, 10):
+        index = np.random.choice(a = HMM.L, p = HMM.A[index])
+        observ = np.random.choice(a = HMM.D, p = HMM.O[index])
+        while (syllable(emission, new_word) > 10):    
+            new_word = np.random.choice(a = HMM.D, p = HMM.O[index])
 
     return emission
 
