@@ -65,6 +65,10 @@ def numerize_data(sonnets):
         numerized.append(number_row)        
     return (word_map, numerized)
 
+# Returns a word based on the number from word map
+def number_to_word(dictionary, number):
+    return dictionary.keys()[dictionary.values().index(number)]
+
 # Stores Rhymes in dictionary  
 def get_rhymes(data):
     result = {}
