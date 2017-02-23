@@ -47,6 +47,24 @@ def reverse_data(sonnets):
         reverse.append(copy)
     return reverse
 
+def numerize_data(sonnets):
+    counter = 0
+    numerized = []
+    word_map = {}
+
+    for row in sonnets:
+        number_row = []
+        for word in row:
+            # Store in map if this is a new word
+            if (word not in word_map):
+                word_map[word] = counter
+                counter = counter + 1
+            # Append the number in row    
+            number_row.append(word_map[word])
+
+        numerized.append(number_row)        
+    return (word_map, numerized)
+
 # Stores Rhymes in dictionary  
 def get_rhymes(data):
     result = {}
@@ -128,6 +146,7 @@ def train_HMM(X, n_states = 10):
 #       a. Check if the word ends on the proper stres/unstress.
 #       b. Check that the word does not bring the syllable count to over 10.
 # NOT DONE YET
+"""
 def generate_and_test(hmm):
     emission = ""
     index = np.random.choice(a = HMM.L, p = HMM.A[index])
@@ -139,16 +158,19 @@ def generate_and_test(hmm):
             new_word = np.random.choice(a = HMM.D, p = HMM.O[index])
 
     return emission
-
+"""
 # Main Loop
 if __name__ == '__main__':
     shakespeare = read_data("project2data/shakespeare.txt")
     reverse = reverse_data(shakespeare)
-    print reverse
+    #print reverse
     #spenser = read_data("project2data/spenser.txt")
     #print spenser
-    rhymedic = get_rhymes(shakespeare)
-    print seed_rhymes(rhymedic)
+    #rhymedic = get_rhymes(shakespeare)
+    #print seed_rhymes(rhymedic)
+    (word_map, numerized) = numerize_data(reverse)
+    print numerized
+    
 """
     HMM_model = train_HMM(spenser)
 
