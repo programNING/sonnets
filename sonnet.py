@@ -13,7 +13,9 @@ Created on Mon Feb 20 15:02:29 2017
 import random
 import csv
 import numpy as np
-#import HMM 
+import sys
+sys.path.append('./baum_welch')
+import HMM 
 
 def read_data(filename):    
     header = 3
@@ -52,7 +54,6 @@ def get_rhymes(data):
     for i in xrange(0, len(data), 14):
         # Jump between each sonnet and collect the rhymes.
         sonnet = data[i : i + 14]
-        print 'sonnet ', i, ' is ', sonnet
 
         # We hardcode the rhyming pairs of the sonnet because sonnets
         # have a rigid form anyways, so let's take advantage of it.
@@ -96,8 +97,8 @@ def seed_rhymes(rdict):
             result[idx + 2] = [random.choice(rdict[word1])]
             idx += 1
         else:
-            result[idx] = word1
-            result[idx + 1] = random.choice(rdict[word1])
+            result[idx] = [word1]
+            result[idx + 1] = [random.choice(rdict[word1])]
 
     return result
 
