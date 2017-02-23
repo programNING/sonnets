@@ -47,6 +47,24 @@ def reverse_data(sonnets):
         reverse.append(copy)
     return reverse
 
+def numerize_data(sonnets):
+    counter = 0
+    numerized = []
+    word_map = {}
+
+    for row in sonnets:
+        number_row = []
+        for word in row:
+            # Store in map if this is a new word
+            if (word not in word_map):
+                word_map[word] = counter
+                counter = counter + 1
+            # Append the number in row    
+            number_row.append(word_map[word])
+
+        numerized.append(number_row)        
+    return (word_map, numerized)
+
 # Stores Rhymes in dictionary  
 def get_rhymes(data):
     result = {}
@@ -142,7 +160,7 @@ def get_begin_stress(word):
     pass
 
 # ====== GENERATE / TEST ====== #
-def generate_and_test(ourHMM, sonnet, obsmap):
+def generate_and_test(hmm):
     emission = ""
     line_str = ''
     for line in sonnet:
@@ -209,11 +227,14 @@ def generate_and_test(ourHMM, sonnet, obsmap):
 if __name__ == '__main__':
     shakespeare = read_data("project2data/shakespeare.txt")
     reverse = reverse_data(shakespeare)
-    print reverse
+    #print reverse
     #spenser = read_data("project2data/spenser.txt")
     #print spenser
-    rhymedic = get_rhymes(shakespeare)
-    print seed_rhymes(rhymedic)
+    #rhymedic = get_rhymes(shakespeare)
+    #print seed_rhymes(rhymedic)
+    (word_map, numerized) = numerize_data(reverse)
+    print numerized
+    
 """
     HMM_model = train_HMM(spenser)
 
