@@ -16,6 +16,7 @@ import numpy as np
 import sys
 sys.path.append('./baum_welch')
 import HMM 
+from nltk.corpus import cmudict
 
 def read_data(filename):    
     header = 3
@@ -65,6 +66,33 @@ def numerize_data(sonnets):
         numerized.append(number_row)        
     return (word_map, numerized)
 
+# =========== NLTK HELPER FUNCTIONS ========== #
+def convert_obs_to_word(dictionary, number):
+    # Returns a word based on the number from word map
+    return dictionary.keys()[dictionary.values().index(number)]
+
+# Given a word, strip it of any punctuation (except for possessives(?)
+# and those weird apostrophes Shakespeare likes to use bet'ween letters.
+# Then, check to see if it is in the NLTK CMUdict.
+#   If it is, then COUNT the number of syllables and return that.
+#   If it isn't, return some default value for number of syllables (say 1?)
+def get_syllables(word):
+    pass
+
+# Given a word, strip it of any punctuation
+# Then, check to see if it is in the NLTK CMUdict.
+#     If it is, then use string parsing to check if its LAST syllable
+#        is stressed (return 1) or unstressed (return 0)
+#     If it is NOT, then I dunno? Return unstressed???
+def get_end_stress(word):
+    if cmudict.dict().get(word) != None:
+        # Get the first pronounciation
+        lst = cmudict.dict().get(word)[0]
+        lst = [i in lst if i]
+
+def strip_word(word):
+    pass
+
 # Stores Rhymes in dictionary  
 def get_rhymes(data):
     result = {}
@@ -107,16 +135,17 @@ def seed_rhymes(rdict):
     idx = 0
     while idx < 12:
         word1 = random.choice(rdict.keys())
-        if idx % 2 == 0 and idx != 0:
-            idx = idx + 2
-        if idx != 12:
-            result[idx] = [word1]
+        if in_cmudict(word1):
+            if idx % 2 == 0 and idx != 0:
+                idx = idx + 2
+            if idx != 12:
+                result[idx] = [word1]
 
-            result[idx + 2] = [random.choice(rdict[word1])]
-            idx += 1
-        else:
-            result[idx] = [word1]
-            result[idx + 1] = [random.choice(rdict[word1])]
+                result[idx + 2] = [random.choice(rdict[word1])]
+                idx += 1
+            else:
+                result[idx] = [word1]
+                result[idx + 1] = [random.choice(rdict[word1])]
 
     return result
 
@@ -147,25 +176,6 @@ def train_HMM(X, n_states = 10):
 #       b. Check that the word does not bring the syllable count to over 10.
 
 # ====== HELPER FUNCTIONS FOR GENERATE/TEST ====== #
-def convert_obs_to_word(dictionary, number):
-    # Returns a word based on the number from word map
-    return dictionary.keys()[dictionary.values().index(number)]
-
-# Given a word, strip it of any punctuation (except for possessives(?)
-# and those weird apostrophes Shakespeare likes to use bet'ween letters.
-# Then, check to see if it is in the NLTK CMUdict.
-#   If it is, then COUNT the number of syllables and return that.
-#   If it isn't, return some default value for number of syllables (say 1?)
-def get_syllables(word):
-    pass
-
-# Given a word, strip it of any punctuation
-# Then, check to see if it is in the NLTK CMUdict.
-#     If it is, then use string parsing to check if its LAST syllable
-#        is stressed (return 1) or unstressed (return 0)
-#     If it is NOT, then I dunno? Return unstressed???
-def get_end_stress(word):
-    pass
 
 # Given a word, strip it of any punctuation
 # Then, check to see if it is in the NLTK CMUdict.
@@ -232,15 +242,16 @@ def generate_and_test(ourHMM, sonnet, obsmap):
             next_syllables = get_syllables(next_word)
             if next_syllables + num_syllables <= 10:
                 # Check that the stress is correct.
-                end_stress = get_end_stress(next_word)
                 previous_word = convert_obs_to_word(obsmap, last_word)
                 begin_stress = get_begin_stress(previous_stress)
-                if end_stress + begin_stress == 1:
-                    # If both the stress is good and it doesn't put us
-                    # above our syllable count, then add it to the line!
-                    line.append(next_obs)
-                    line_str = next_word + ' ' + line_str
-                    num_syllables += next_syllables
+                end_stress = get_end_stress(next_word)
+                if end_stress != None:
+                    if end_stress + begin_stress == 1:
+                        # If both the stress is good and it doesn't put us
+                        # above our syllable count, then add it to the line!
+                        line.append(next_obs)
+                        line_str = next_word + ' ' + line_str
+                        num_syllables += next_syllables
 
     return emission
 
