@@ -77,7 +77,15 @@ def convert_obs_to_word(dictionary, number):
 #   If it is, then COUNT the number of syllables and return that.
 #   If it isn't, return some default value for number of syllables (say 1?)
 def get_syllables(word):
-    pass
+    word = strip_word(word)
+    if cmudict.dict().get(word) != None:
+        lst = cmudict.dict().get(word)[0]
+        syl = 0
+        for part in lst:
+            if (part[-1].isdigit()):
+                syl = syl + 1
+        return syl
+    return None
 
 # Given a word, strip it of any punctuation
 # Then, check to see if it is in the NLTK CMUdict.
