@@ -112,6 +112,8 @@ def get_end_stress(word_):
     lst = CMUdict.get(word)[0]
     lst = [i for i in lst if i[-1].isdigit()]
     end_stress = int(lst[-1][-1])
+    if end_stress == 2:
+        end_stress -= 1    
     return end_stress
 
 # Given a word, strip it of any punctuation
