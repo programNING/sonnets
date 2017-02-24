@@ -18,6 +18,8 @@ sys.path.append('./baum_welch')
 import HMM 
 from nltk.corpus import cmudict
 
+CMUdict = cmudict.dict()
+THRESHOLD = 0.0001
 def read_data(filename):    
     header = 3
     divs = 18
@@ -71,6 +73,18 @@ def convert_obs_to_word(dictionary, number):
     # Returns a word based on the number from word map
     return dictionary.keys()[dictionary.values().index(number)]
 
+def convert_word_to_obs(dictionary, word):
+    return dictionary[word]
+
+def numerize_sonnet(sonnet, dictionary):
+    result = []
+    for line in sonnet:
+        numline = []
+        for word in line:
+            numline.append(dictionary[word])
+        result.append(numline)
+    return result
+
 # Given a word, strip it of any punctuation (except for possessives(?)
 # and those weird apostrophes Shakespeare likes to use bet'ween letters.
 # Then, check to see if it is in the NLTK CMUdict.
@@ -78,8 +92,8 @@ def convert_obs_to_word(dictionary, number):
 #   If it isn't, return some default value for number of syllables (say 1?)
 def get_syllables(word):
     word = strip_word(word)
-    if cmudict.dict().get(word) != None:
-        lst = cmudict.dict().get(word)[0]
+    if CMUdict.get(word) != None:
+        lst = CMUdict.get(word)[0]
         syl = 0
         for part in lst:
             if (part[-1].isdigit()):
@@ -95,8 +109,8 @@ def get_syllables(word):
 def get_end_stress(word_):
     word = strip_word(word_)
     # Get the first pronounciation
-    lst = cmudict.dict().get(word)[0]
-    lst = [i in lst if i[-1].isdigit()]
+    lst = CMUdict.get(word)[0]
+    lst = [i for i in lst if i[-1].isdigit()]
     end_stress = int(lst[-1][-1])
     return end_stress
 
@@ -108,9 +122,11 @@ def get_end_stress(word_):
 def get_begin_stress(word_):
     word = strip_word(word_)
     # Get the first pronounciation
-    lst = cmudict.dict().get(word)[0]
-    lst = [i in lst if i[-1].isdigit()]
+    lst = CMUdict.get(word)[0]
+    lst = [i for i in lst if i[-1].isdigit()]
     begin_stress = int(lst[0][-1])
+    if begin_stress == 2:
+        begin_stress -= 1
     return begin_stress
 
 def strip_word(word_):
@@ -128,12 +144,13 @@ def strip_word(word_):
             done = True
     return word.lower()
 
-def in_cmudict(word_):
-    word = to_strip(word_)
-    if cmudict.dict().get(word) == None:
-        return False
-    else:
-        return True
+def in_cmudict(wordarr):
+    result = False
+    for word_ in wordarr:
+        word = strip_word(word_)
+        if CMUdict.get(word) != None:
+            result = True
+    return result
 
 # Stores Rhymes in dictionary  
 def get_rhymes(data):
@@ -177,17 +194,23 @@ def seed_rhymes(rdict):
     idx = 0
     while idx < 12:
         word1 = random.choice(rdict.keys())
-        if in_cmudict(word1):
+        if in_cmudict([word1]) and in_cmudict(rdict[word1]):
             if idx % 2 == 0 and idx != 0:
                 idx = idx + 2
             if idx != 12:
                 result[idx] = [word1]
-
-                result[idx + 2] = [random.choice(rdict[word1])]
+                word2 = random.choice(rdict[word1])
+                #print word1, ' rhymes with ', rdict[word1]
+                while not in_cmudict([word2]):
+                    word2 = random.choice(rdict[word1])
+                result[idx + 2] = [word2]
                 idx += 1
             else:
                 result[idx] = [word1]
-                result[idx + 1] = [random.choice(rdict[word1])]
+                word2 = random.choice(rdict[word1])
+                while not in_cmudict([word2]):
+                    word2 = random.choice(rdict[word1])
+                result[idx + 1] = [word2]
 
     return result
 
@@ -196,8 +219,8 @@ def seed_rhymes(rdict):
 # Should be as simple as passing all of the words,
 # and a parameter for how many hidden states we should allow.
 # Can probably model this off of TA code from last assignment.
-def train_HMM(X, n_states = 10):
-    model = HMM.unsupervised_HMM(X, n_states)
+def train_HMM(X, n_states = 10, n_iter = 10):
+    model = HMM.unsupervised_HMM(X, n_states, n_iter)
     return model
 
 # Hoo boy this is the One.
@@ -227,17 +250,15 @@ def generate_and_test(ourHMM, sonnet, obsmap):
 
         # Need to give the first word a starting state.
         # Generate a random probability.
-        rand_prob = random.uniform(0, 1)
-        starting_state = 0
-        while rand_prob > 0:
-            rand_prob -= ourHMM.O[starting_state][starting_word]
-            starting_state += 1
-        starting_state -= 1
-
+        arr = np.array(ourHMM.O)[:, line[0]].tolist()
+        starting_state = arr.index(max(arr))
         state_lst.append(starting_state)
 
         # We assume each line is seeded with ONE word.
-        num_syllables = get_syllables(line[0])
+        #print 'starting_word is: ', starting_word
+        #print 'is the starting word in cmudict?: ', CMUdict.get(starting_word)
+        num_syllables = get_syllables(starting_word)
+        #print 'is num_syllables == None?: ', num_syllables == None
         while num_syllables < 10:
             # Generate a new word!
             # To do this, first get the state of the previous word
@@ -247,7 +268,7 @@ def generate_and_test(ourHMM, sonnet, obsmap):
             # Given the previous state, find the state of the next word.
             rand_prob = random.uniform(0, 1)
             next_state = 0
-            while rand_prob > 0:
+            while rand_prob > THRESHOLD:
                 rand_prob -= ourHMM.A[prev_state][next_state]
                 next_state += 1
             next_state -= 1
@@ -255,7 +276,7 @@ def generate_and_test(ourHMM, sonnet, obsmap):
             # Find the next observation based on the next state.
             rand_prob = random.uniform(0, 1)
             next_obs = 0
-            while rand_prob > 0:
+            while rand_prob > THRESHOLD:
                 rand_prob -= ourHMM.O[next_state][next_obs]
                 next_obs += 1
             next_obs -= 1
@@ -263,12 +284,12 @@ def generate_and_test(ourHMM, sonnet, obsmap):
             # Check to see if this observation will push us over
             # our syllable count. If so, we must try again.
             next_word = convert_obs_to_word(obsmap, next_obs)
-            if in_cmudict(next_word):
+            if in_cmudict([next_word]):
                 next_syllables = get_syllables(next_word)
                 if next_syllables + num_syllables <= 10:
                     # Check that the stress is correct.
                     previous_word = convert_obs_to_word(obsmap, last_word)
-                    begin_stress = get_begin_stress(previous_stress)
+                    begin_stress = get_begin_stress(previous_word)
                     end_stress = get_end_stress(next_word)
                     if end_stress + begin_stress == 1:
                         # If both the stress is good and it doesn't put us
@@ -276,7 +297,7 @@ def generate_and_test(ourHMM, sonnet, obsmap):
                         line.append(next_obs)
                         line_str = next_word + ' ' + line_str
                         num_syllables += next_syllables
-
+    emission += line_str
     return emission
 
 # Main Loop
@@ -286,16 +307,23 @@ if __name__ == '__main__':
     #print reverse
     #spenser = read_data("project2data/spenser.txt")
     #print spenser
-    #rhymedic = get_rhymes(shakespeare)
-    #print seed_rhymes(rhymedic)
+    rhymedic = get_rhymes(shakespeare)
+    sonnet = seed_rhymes(rhymedic)
+    #print len(sonnet)
+    '''
+    print sonnet
+    for i in sonnet:
+        print strip_word(i[0])
+        print get_begin_stress(i[0])
+        print get_end_stress(i[0])
+        print get_syllables(i[0])
+    '''
     (word_map, numerized) = numerize_data(reverse)
-    print numerized
-    
-"""
-    HMM_model = train_HMM(spenser)
+    num_sonnet = numerize_sonnet(sonnet, word_map)
+    #print len(sonnet)
+    #print num_sonnet
+    #print numerized
 
-    rhyme_dict = get_rhymes(spenser)
-    seeded_sonnet = seed_rhymes(rhyme_dict)
+    HMM_model = train_HMM(numerized, n_iter = 200)
 
-    print generate_and_test(HMM_model, seeded_sonnet)
-"""
+    print generate_and_test(HMM_model, num_sonnet, word_map)
