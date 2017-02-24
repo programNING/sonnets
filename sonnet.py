@@ -324,6 +324,6 @@ if __name__ == '__main__':
     #print num_sonnet
     #print numerized
 
-    HMM_model = train_HMM(numerized, n_iter = 200)
+    HMM_model = train_HMM(numerized, 20, n_iter = 200)
 
     print generate_and_test(HMM_model, num_sonnet, word_map)
