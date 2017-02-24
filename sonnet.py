@@ -300,6 +300,51 @@ def generate_and_test(ourHMM, sonnet, obsmap):
     emission += line_str
     return emission
 
+# Visualize highest probability word for each state
+def common_word(HMM, word_map):
+    i = 0
+    for state in HMM.O:
+        num_word = state.index(max(state))
+        print "State " + str(i)
+        word = convert_word_to_obs(word_map, num_word)
+        print "Highest Probability word: " + word
+        print "Probability: " + str(max(state))
+        print "Syllable Count: " + str(get_syllables(word))
+        print "Begin Stress: " + str(get_begin_stress(word))
+        print "End Stress: " + str(get_end_stress(word))
+        print "\n"
+        i = i + 1
+    return 0
+
+# Visualize average of each state
+def average_word(HMM):
+    i = 0
+    for state in HMM.O:
+        j = 0
+        div = 0.0
+        prob = 0.0
+        syl = 0.0
+        begin_stress = 0.0
+        end_stress = 0.0
+        for num_word in state:
+            if (num_word > 0.05):
+                word = convert_word_to_obs(word_map, j)
+                prob = prob + num_word
+                syl = syl + get_syllables(word)
+                begin_stress = begin_stress + get_begin_stress(word)
+                end_stress = end_stress + get_end_stress(word)
+                div = div + 1
+            j = j + 1
+
+        print "State " + str(i)    
+        print "Average Prob: " + str(prob/div)
+        print "Average syllables: " + str(syl/div)
+        print "Average Begin Stress: " + str(begin_stress/div)
+        print "Average End Stress: " + str(end_stress/div)
+        i = i + 1
+
+    return 0
+
 # Main Loop
 if __name__ == '__main__':
     shakespeare = read_data("project2data/shakespeare.txt")
@@ -327,6 +372,6 @@ if __name__ == '__main__':
     #print num_sonnet
     #print numerized
 
-    HMM_model = train_HMM(numerized, n_states = 20, n_iter = 200)
+    HMM_model = train_HMM(numerized, n_states = 20, n_iter = 500)
 
     print generate_and_test(HMM_model, num_sonnet, word_map)
