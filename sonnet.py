@@ -84,14 +84,48 @@ def get_syllables(word):
 #     If it is, then use string parsing to check if its LAST syllable
 #        is stressed (return 1) or unstressed (return 0)
 #     If it is NOT, then I dunno? Return unstressed???
-def get_end_stress(word):
-    if cmudict.dict().get(word) != None:
-        # Get the first pronounciation
-        lst = cmudict.dict().get(word)[0]
-        lst = [i in lst if i]
+def get_end_stress(word_):
+    word = strip_word(word_)
+    # Get the first pronounciation
+    lst = cmudict.dict().get(word)[0]
+    lst = [i in lst if i[-1].isdigit()]
+    end_stress = int(lst[-1][-1])
+    return end_stress
 
-def strip_word(word):
-    pass
+# Given a word, strip it of any punctuation
+# Then, check to see if it is in the NLTK CMUdict.
+#     If it is, then use string parsing to check if its FIRST syllable
+#        is stressed (return 1) or unstressed (return 0)
+#     If it is NOT, then I dunno? Return unstressed???
+def get_begin_stress(word_):
+    word = strip_word(word_)
+    # Get the first pronounciation
+    lst = cmudict.dict().get(word)[0]
+    lst = [i in lst if i[-1].isdigit()]
+    begin_stress = int(lst[0][-1])
+    return begin_stress
+
+def strip_word(word_):
+    to_strip = [':', ',', '.', '?', '!', '(', ')']
+    done = False
+    word = word_
+    while not done:
+        if word[0] in to_strip:
+            done = False
+            word = word[1:]
+        elif word[-1] in to_strip:
+            done = False
+            word = word[:-1]
+        else:
+            done = True
+    return word.lower()
+
+def in_cmudict(word_):
+    word = to_strip(word_)
+    if cmudict.dict().get(word) == None:
+        return False
+    else:
+        return True
 
 # Stores Rhymes in dictionary  
 def get_rhymes(data):
@@ -149,15 +183,6 @@ def seed_rhymes(rdict):
 
     return result
 
-    # TODO:: finish this function
-    # 0 -> 2
-    # 1 -> 3
-    # 4 -> 6 (2 mod 2 = 0 -> 2 * i = new i)
-    # 5 -> 7
-    # 8 -> 10 (4 mod 2 = 0 -> 2 * i = new i)
-    # 9 -> 11
-    # 12 -> 13
-
     
 # Function for passing dataset to HMM.
 # Should be as simple as passing all of the words,
@@ -175,15 +200,6 @@ def train_HMM(X, n_states = 10):
 #       a. Check if the word ends on the proper stres/unstress.
 #       b. Check that the word does not bring the syllable count to over 10.
 
-# ====== HELPER FUNCTIONS FOR GENERATE/TEST ====== #
-
-# Given a word, strip it of any punctuation
-# Then, check to see if it is in the NLTK CMUdict.
-#     If it is, then use string parsing to check if its FIRST syllable
-#        is stressed (return 1) or unstressed (return 0)
-#     If it is NOT, then I dunno? Return unstressed???
-def get_begin_stress(word):
-    pass
 
 # ====== GENERATE / TEST ====== #
 def generate_and_test(ourHMM, sonnet, obsmap):
@@ -239,13 +255,13 @@ def generate_and_test(ourHMM, sonnet, obsmap):
             # Check to see if this observation will push us over
             # our syllable count. If so, we must try again.
             next_word = convert_obs_to_word(obsmap, next_obs)
-            next_syllables = get_syllables(next_word)
-            if next_syllables + num_syllables <= 10:
-                # Check that the stress is correct.
-                previous_word = convert_obs_to_word(obsmap, last_word)
-                begin_stress = get_begin_stress(previous_stress)
-                end_stress = get_end_stress(next_word)
-                if end_stress != None:
+            if in_cmudict(next_word):
+                next_syllables = get_syllables(next_word)
+                if next_syllables + num_syllables <= 10:
+                    # Check that the stress is correct.
+                    previous_word = convert_obs_to_word(obsmap, last_word)
+                    begin_stress = get_begin_stress(previous_stress)
+                    end_stress = get_end_stress(next_word)
                     if end_stress + begin_stress == 1:
                         # If both the stress is good and it doesn't put us
                         # above our syllable count, then add it to the line!
