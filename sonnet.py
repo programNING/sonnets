@@ -303,11 +303,14 @@ def generate_and_test(ourHMM, sonnet, obsmap):
 # Main Loop
 if __name__ == '__main__':
     shakespeare = read_data("project2data/shakespeare.txt")
-    reverse = reverse_data(shakespeare)
+    spenser = read_data("project2data/spenser.txt")
+    data = np.concatenate((shakespeare, spenser), axis = 0)
+
+    reverse = reverse_data(data)
     #print reverse
     #spenser = read_data("project2data/spenser.txt")
     #print spenser
-    rhymedic = get_rhymes(shakespeare)
+    rhymedic = get_rhymes(data)
     sonnet = seed_rhymes(rhymedic)
     #print len(sonnet)
     '''
@@ -324,6 +327,6 @@ if __name__ == '__main__':
     #print num_sonnet
     #print numerized
 
-    HMM_model = train_HMM(numerized, 20, n_iter = 200)
+    HMM_model = train_HMM(numerized, n_states = 20, n_iter = 200)
 
     print generate_and_test(HMM_model, num_sonnet, word_map)
