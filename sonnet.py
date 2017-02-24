@@ -65,10 +65,6 @@ def numerize_data(sonnets):
         numerized.append(number_row)        
     return (word_map, numerized)
 
-# Returns a word based on the number from word map
-def number_to_word(dictionary, number):
-    return dictionary.keys()[dictionary.values().index(number)]
-
 # Stores Rhymes in dictionary  
 def get_rhymes(data):
     result = {}
@@ -151,20 +147,36 @@ def train_HMM(X, n_states = 10):
 #       b. Check that the word does not bring the syllable count to over 10.
 
 # ====== HELPER FUNCTIONS FOR GENERATE/TEST ====== #
-def convert_obs_to_word(num):
-    pass
+def convert_obs_to_word(dictionary, number):
+    # Returns a word based on the number from word map
+    return dictionary.keys()[dictionary.values().index(number)]
 
+# Given a word, strip it of any punctuation (except for possessives(?)
+# and those weird apostrophes Shakespeare likes to use bet'ween letters.
+# Then, check to see if it is in the NLTK CMUdict.
+#   If it is, then COUNT the number of syllables and return that.
+#   If it isn't, return some default value for number of syllables (say 1?)
 def get_syllables(word):
     pass
 
+# Given a word, strip it of any punctuation
+# Then, check to see if it is in the NLTK CMUdict.
+#     If it is, then use string parsing to check if its LAST syllable
+#        is stressed (return 1) or unstressed (return 0)
+#     If it is NOT, then I dunno? Return unstressed???
 def get_end_stress(word):
     pass
 
+# Given a word, strip it of any punctuation
+# Then, check to see if it is in the NLTK CMUdict.
+#     If it is, then use string parsing to check if its FIRST syllable
+#        is stressed (return 1) or unstressed (return 0)
+#     If it is NOT, then I dunno? Return unstressed???
 def get_begin_stress(word):
     pass
 
 # ====== GENERATE / TEST ====== #
-def generate_and_test(hmm):
+def generate_and_test(ourHMM, sonnet, obsmap):
     emission = ""
     line_str = ''
     for line in sonnet:
@@ -173,25 +185,30 @@ def generate_and_test(hmm):
         # and formatted with spaces + newlines.
         emission += line_str
         line_str = ''
+        state_lst = []
 
         # Need to convert the "word" in the sonnet (a number)
-        starting_word = convert_obs_to_word(line[0], obsmap)
+        starting_word = convert_obs_to_word(obsmap, line[0])
         line_str = starting_word + '\n'
+
+        # Need to give the first word a starting state.
+        # Generate a random probability.
+        rand_prob = random.uniform(0, 1)
+        starting_state = 0
+        while rand_prob > 0:
+            rand_prob -= ourHMM.O[starting_state][starting_word]
+            starting_state += 1
+        starting_state -= 1
+
+        state_lst.append(starting_state)
 
         # We assume each line is seeded with ONE word.
         num_syllables = get_syllables(line[0])
         while num_syllables < 10:
             # Generate a new word!
-            # To do this, first find the state of the previous word
+            # To do this, first get the state of the previous word
             last_word = line[-1]
-
-            # Generate a random probability.
-            rand_prob = random.uniform(0, 1)
-            prev_state = 0
-            while rand_prob > 0:
-                rand_prob -= ourHMM.O[prev_state][last_word]
-                prev_state += 1
-            prev_state -= 1
+            prev_state = state_lst[-1]
 
             # Given the previous state, find the state of the next word.
             rand_prob = random.uniform(0, 1)
@@ -211,12 +228,12 @@ def generate_and_test(hmm):
 
             # Check to see if this observation will push us over
             # our syllable count. If so, we must try again.
-            next_word = convert_obs_to_word(next_obs, obsmap)
+            next_word = convert_obs_to_word(obsmap, next_obs)
             next_syllables = get_syllables(next_word)
             if next_syllables + num_syllables <= 10:
                 # Check that the stress is correct.
                 end_stress = get_end_stress(next_word)
-                previous_word = convert_obs_to_word(last_word, obsmap)
+                previous_word = convert_obs_to_word(obsmap, last_word)
                 begin_stress = get_begin_stress(previous_stress)
                 if end_stress + begin_stress == 1:
                     # If both the stress is good and it doesn't put us
