@@ -306,18 +306,19 @@ def common_word(HMM, word_map):
     for state in HMM.O:
         num_word = state.index(max(state))
         print "State " + str(i)
-        word = convert_word_to_obs(word_map, num_word)
+        word = convert_obs_to_word(word_map, num_word)
         print "Highest Probability word: " + word
         print "Probability: " + str(max(state))
-        print "Syllable Count: " + str(get_syllables(word))
-        print "Begin Stress: " + str(get_begin_stress(word))
-        print "End Stress: " + str(get_end_stress(word))
+        if in_cmudict([word]):
+            print "Syllable Count: " + str(get_syllables(word))
+            print "Begin Stress: " + str(get_begin_stress(word))
+            print "End Stress: " + str(get_end_stress(word))
         print "\n"
         i = i + 1
     return 0
 
 # Visualize average of each state
-def average_word(HMM):
+def average_word(HMM, word_map):
     i = 0
     for state in HMM.O:
         j = 0
@@ -327,8 +328,8 @@ def average_word(HMM):
         begin_stress = 0.0
         end_stress = 0.0
         for num_word in state:
-            if (num_word > 0.05):
-                word = convert_word_to_obs(word_map, j)
+            word = convert_obs_to_word(word_map, j)
+            if in_cmudict([word]):
                 prob = prob + num_word
                 syl = syl + get_syllables(word)
                 begin_stress = begin_stress + get_begin_stress(word)
@@ -372,6 +373,10 @@ if __name__ == '__main__':
     #print num_sonnet
     #print numerized
 
-    HMM_model = train_HMM(numerized, n_states = 20, n_iter = 500)
+    HMM_model = train_HMM(numerized, n_states = 4, n_iter = 10)
 
     print generate_and_test(HMM_model, num_sonnet, word_map)
+    print '\n'
+    print '============= VIS ============='
+    average_word(HMM_model, word_map)
+    common_word(HMM_model, word_map)
