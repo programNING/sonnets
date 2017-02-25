@@ -329,9 +329,11 @@ def average_word(HMM, word_map):
         syl = 0.0
         begin_stress = 0.0
         end_stress = 0.0
+        wordlst = []
         for num_word in state:
             word = convert_obs_to_word(word_map, j)
-            if in_cmudict([word]):
+            if in_cmudict([word]) and (num_word > 10**-3):
+                wordlst.append((num_word, word))
                 prob = prob + num_word
                 syl = syl + get_syllables(word)
                 begin_stress = begin_stress + get_begin_stress(word)
@@ -344,6 +346,8 @@ def average_word(HMM, word_map):
         print "Average syllables: " + str(syl/div)
         print "Average Begin Stress: " + str(begin_stress/div)
         print "Average End Stress: " + str(end_stress/div)
+        print "High probability words: " + str(sorted(wordlst, key = lambda word: word[0], reverse = True)[:10])
+        print "\n"
         i = i + 1
 
     return 0
@@ -375,7 +379,7 @@ if __name__ == '__main__':
     #print num_sonnet
     #print numerized
 
-    HMM_model = train_HMM(numerized, n_states = 4, n_iter = 10)
+    HMM_model = train_HMM(numerized, n_states = 10, n_iter = 100)
 
     print generate_and_test(HMM_model, num_sonnet, word_map)
     print '\n'
