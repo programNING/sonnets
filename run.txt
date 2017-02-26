@@ -1,0 +1,96 @@
+in dial's this The noted, miseries.
+a Pointing those in steal the gracious grief
+the praise in kindled heaven false a eyes:
+In beauty some (A music, being thief
+the worship honor Speaking comments doom:
+rhymes, the solace mind, in heavily thee,
+the cruelly not invention be the come,
+another melting straying usury,
+and do the all. and thou deserving? blot?
+in powers close the by and thou the heat,
+were never sour power nothing not.
+and purpose lesson others changing beat,
+and me her might deserving? beck) In veins,
+her I the All the As in marriage gains?
+
+
+
+============= VIS =============
+State 0
+Average Prob: 0.00337080399781
+Average syllables: 1.41784037559
+Average Begin Stress: 0.953051643192
+Average End Stress: 0.633802816901
+High probability words: [(0.02344296213511751, 'love'), (0.018772391356524813, 'it'), (0.018519437619073553, 'self'), (0.014599014507099302, 'do'), (0.013079027926781672, 'are'), (0.013026919002097929, 'never'), (0.012314490722806696, 'did'), (0.01198635597500376, 'not'), (0.011820907291347138, 'beauty'), (0.011526514856016447, 'things')]
+
+
+State 1
+Average Prob: 0.0015341682293
+Average syllables: 1.50689655172
+Average Begin Stress: 0.751724137931
+Average End Stress: 0.843103448276
+High probability words: [(0.012641186292348436, 'be.'), (0.010553298653938292, 'eye,'), (0.009158422853074671, 'thee,'), (0.007546791583237118, 'me.'), (0.006514205251318231, 'decay,'), (0.006462722516803027, 'praise.'), (0.006325458808399454, 'be,'), (0.006263672472722699, 'look,'), (0.005173476240026908, 'fire,'), (0.004769052946724639, 'thee.')]
+
+
+State 2
+Average Prob: 0.0057857173723
+Average syllables: 1.1015625
+Average Begin Stress: 0.90625
+Average End Stress: 0.84375
+High probability words: [(0.09584080886967489, 'my'), (0.06619316409970437, 'the'), (0.04957737287113698, 'I'), (0.0305903249500578, 'that'), (0.029162346604569237, 'thy'), (0.020578967119118146, 'in'), (0.01944101964483934, 'his'), (0.019164429456536798, 'The'), (0.016185325422027698, 'your'), (0.016178059293554172, 'be')]
+
+
+State 3
+Average Prob: 0.00147876615914
+Average syllables: 1.4753820034
+Average Begin Stress: 0.738539898132
+Average End Stress: 0.86078098472
+High probability words: [(0.012674747107181002, 'me,'), (0.012121776659877086, 'thee,'), (0.007375045345824105, 'be,'), (0.007248403121222473, 'prove,'), (0.007062255534674204, 'lies,'), (0.006800644033002699, 'still,'), (0.0058314530742465285, 'show,'), (0.005643725037248341, 'me.'), (0.005333312316794623, 'day,'), (0.005320632574087872, 'away,')]
+
+
+State 4
+Average Prob: 0.00440012853614
+Average syllables: 1.22727272727
+Average Begin Stress: 0.935064935065
+Average End Stress: 0.733766233766
+High probability words: [(0.09428480416492414, 'of'), (0.03947862645402584, 'thy'), (0.02069945062602392, 'your'), (0.018813244981570425, 'sweet'), (0.01877727421828567, 'in'), (0.01861821862056941, 'their'), (0.01618000599708768, 'or'), (0.014755845152113652, 'The'), (0.014247772547085192, 'my'), (0.01379311356627623, 'to')]
+
+
+State 5
+Average Prob: 0.00551975042387
+Average syllables: 1.14814814815
+Average Begin Stress: 0.881481481481
+Average End Stress: 0.851851851852
+High probability words: [(0.04878737012020261, 'and'), (0.03869357438974795, 'I'), (0.03313436042338636, 'of'), (0.030286407120007342, 'thou'), (0.026113246117311414, 'is'), (0.02466686140108366, 'that'), (0.02440792311523106, 'to'), (0.022423212629012826, 'in'), (0.02227297826101221, 'with'), (0.021235880837962382, 'not')]
+
+
+State 6
+Average Prob: 0.00277446503381
+Average syllables: 1.37853107345
+Average Begin Stress: 0.898305084746
+Average End Stress: 0.723163841808
+High probability words: [(0.05894799567279287, 'to'), (0.03757996216591827, 'doth'), (0.022208814442100506, 'his'), (0.022086392272064992, 'so'), (0.013843702245494551, 'be'), (0.006539781429685569, 'heart'), (0.0064059252508690415, 'the'), (0.005776533462400047, 'more'), (0.005170560627498489, 'is'), (0.004503582782303197, 'me')]
+
+
+State 7
+Average Prob: 0.00155725459248
+Average syllables: 1.52816901408
+Average Begin Stress: 0.830985915493
+Average End Stress: 0.718309859155
+High probability words: [(0.013051882026780853, 'sight,'), (0.010451093904851506, 'eyes,'), (0.009514449234893545, 'love,'), (0.007130427992263539, 'is,'), (0.006647505786453773, 'place,'), (0.0064163250169546856, 'pride,'), (0.006201427608007219, 'praise,'), (0.005988935210272281, 'will,'), (0.0059375180621742945, 'heart,'), (0.005539588155378144, 'deeds,')]
+
+
+State 8
+Average Prob: 0.0042323236747
+Average syllables: 1.07142857143
+Average Begin Stress: 0.985714285714
+Average End Stress: 0.914285714286
+High probability words: [(0.059522950008998494, 'And'), (0.03284964983337895, 'But'), (0.02602772180035385, 'which'), (0.01840410988797136, 'love'), (0.01765922218831389, 'That'), (0.016754071751607588, 'to'), (0.01654326152933816, 'me'), (0.016195967440455348, 'For'), (0.015502070976134097, 'So'), (0.012122828308931867, 'that')]
+
+
+State 9
+Average Prob: 0.00461826478046
+Average syllables: 1.31446540881
+Average Begin Stress: 0.867924528302
+Average End Stress: 0.767295597484
+High probability words: [(0.05927429868639941, 'the'), (0.0484367238933566, 'to'), (0.04544537438437681, 'her'), (0.04098694814975345, 'a'), (0.04027156756631271, 'in'), (0.024176329358737043, 'me'), (0.01983424043070737, 'with'), (0.01704289441146546, 'for'), (0.012105116821074667, 'eyes'), (0.012066913698028453, 'thee')]
